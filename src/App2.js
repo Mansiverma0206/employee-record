@@ -1,6 +1,5 @@
 import { Component } from 'react';
 import dummy from './dummy';
-import "./index.css"
 export default class App extends Component {
   constructor() {
     super()
@@ -10,8 +9,8 @@ export default class App extends Component {
       duplicateError: {
         idstatus: false,
         mailstatus: false
-      },
-      deleteConfirmationId: null
+      }
+      // pageColor : "#fffff"
 
     }
     this.departments = [
@@ -19,6 +18,13 @@ export default class App extends Component {
       { key: 2, value: "Java Developer",color:"alert-warning"},
       { key: 3, value: "Android Developer",color:"alert-info" }
     ]
+    // this.bgColors = [
+    //   {key : 1, value : '#ccaaff'},
+    //   {key : 2, value : '#B0E0E6'},
+    //   {key : 3, value : '#00BFFF'},
+    //   {key : 4, value : '#7B68EE'},
+    //   {key : 5, value : '#EE82EE'},
+    // ]
   }
 
   clear = () => {
@@ -40,6 +46,27 @@ export default class App extends Component {
     this.setState({ employees: [...this.state.employees, ob] })
     this.clear()
   }
+  // DUPLICATE ERROR PROBLEM
+  // checkId = ()=>{
+  //   var id = this.idbox.value
+  //   var isFound = this.state.employees.find(ob=>ob.empid==id)!=undefined
+  //   if(isFound){
+  //     this.setState({duplicateError: {...this.state.duplicateError,idstatus:true}})
+  //   }else{
+  //     this.setState({duplicateError: {...this.state.duplicateError,idstatus:false}})
+  //   }
+  // }
+  // checkMail = ()=>{
+  //   var mail = this.mailbox.value
+  //   var isFound = this.state.employees.find(ob=>ob.email==mail)!=undefined
+  //   if(isFound){
+  //     this.setState({duplicateError: {...this.state.duplicateError,mailstatus:true}})
+  //   }else{
+  //     this.setState({duplicateError: {...this.state.duplicateError,mailstatus:false}})
+  //   }
+  // }
+
+
 
   checkId = () => {
     var id = this.idbox.value
@@ -53,21 +80,28 @@ export default class App extends Component {
     this.setState({ duplicateError: { ...this.state.duplicateError, mailstatus: isFound } })
   }
 
-  handleDelete = (id) => {
-    this.setState({ deleteConfirmationId: id });
-    console.log(this.state.deleteConfirmationId)
-  };
+deleteEmp = (id)=>{
+    const isConfirmed = window.confirm("Are you sure you want to delete this employee?");  
+    if (isConfirmed) {
+      this.setState({ employees: this.state.employees.filter(ob => ob.empid !== id) });
+    }
+  
+  
+  // window.confirm("are you")
+  // this.setState({employees : this.state.employees.filter(ob=>ob.empid!=id)})
+}
 
-  confirmDelete = () => {
-    const { deleteConfirmationId, employees } = this.state;
-    const updatedEmployees = employees.filter(emp => emp.empid !== deleteConfirmationId);
-    this.setState({ employees: updatedEmployees, deleteConfirmationId: null });
-  };
 render() {
-  const { employees, deleteConfirmationId } = this.state;
+  // return <div className='container' style={{backgroundColor:this.state.pageColor}}>
   return <div className='container'>
     <h1 className='alert-danger text-center'>Employee Records</h1>
     <hr />
+    {/* <div>
+           {this.bgColors.map((ob,index)=><>
+           <button onClick={()=>this.setState({pageColor:ob.value})} style={{backgroundColor:ob.value}}>BG-{index+1}</button>&nbsp;&nbsp;
+           </>)}
+      </div> 
+      <hr/>*/}
     <div className='container'>
       <h1 className='text-center alert-success'>Add Employees</h1>
       <div className='row mt-3'>
@@ -120,6 +154,8 @@ render() {
       </div>
     </div>
     <hr />
+    {/* <h1 style={{color:'darkgreen',backgroundColor:'greenyellow',textAlign:'center'}}>Employee Records</h1>
+      <hr/> */}
     <table className='table table-striped table-hover text-center'>
       <thead>
         <tr>
@@ -142,35 +178,12 @@ render() {
             <td>{ob.email}</td>
             <td>{this.departments.find(dep => dep.key == ob.department).value}</td>
             <td>
-            <button data-toggle="modal" data-target="#deleteConfirmationModal" onClick={() => this.handleDelete(ob.empid)} className='btn btn-outline-danger'>Delete</button>
+              <button onClick={()=>{this.deleteEmp(ob.empid)}} className='btn btn-outline-success'>Delete</button>
             </td>
           </tr>
         })}
       </tbody>
     </table>
-
-{deleteConfirmationId && (
-  <div style={{display: "block"}} className="modal" tabIndex="-1" role="dialog" id="deleteConfirmationModal">
-    <div className="modal-dialog" role="document">
-      <div className="modal-content">
-        <div className="modal-header">
-          <h5 className="modal-title">Confirm Deletion</h5>
-          <button type="button" className="close" data-dismiss="modal" aria-label="Close" onClick={() => this.setState({ deleteConfirmationId: null })}>
-            <span aria-hidden="true">&times;</span>
-          </button>
-        </div>
-        <div className="modal-body">
-          Are you sure you want to delete this employee?
-        </div>
-        <div className="modal-footer">
-          <button type="button" className="btn btn-secondary" data-dismiss="modal" onClick={() => this.setState({ deleteConfirmationId: null })}>Cancel</button>
-          <button type="button" className="btn btn-danger" onClick={this.confirmDelete}>Delete</button>
-        </div>
-      </div>
-    </div>
-  </div>
-)}
-
   </div>
 }
 }
